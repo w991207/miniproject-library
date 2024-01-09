@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+
+function selectList() {
+	var reserver = $("#reserver").val();
+	var selectWord = $("#search").val();
+	$.ajax({
+        url: "/book/selectList",
+        method: "get",
+        data: { "selectWord": selectWord },
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            console.log(data[0].title);
+        
+        $("#list").empty();
+        if(data.length == 0){
+            $("#list").append("<p><img src='/img/free-icon-exclamation-mark-8426913.png' alt='검색결과가 없습니다.' width='50' height='50'></p>");
+             $("#list").append("<p>책이 없습니다.</p>");
+        } else {
+            var table = "<table class='table table-bordered'><thead class='thead-dark'><tr><th scope='col'>책 제목</th><th scope='col'>글쓴이</th><th scope='col'>출판사</th><th scope='col'>대여</th></tr></thead><tbody>";
+            $.each(data, function (index, value) {
+                table += "<tr><td>" + value.title + "</td><td>" + value.author + "</td><td>" + value.publisher + "</td><td><button type='button' class='btn btn-sm btn-dark' onclick='reserve(\"" + value.title + "\", \"" + value.author + "\", \"" + value.publisher + "\", \"" + reserver + "\")'>대여</button></td></tr>";
+            });
+
+            table += "</tbody></table>";
+            $("#list").append(table);
+        }
+        },
+        error: function () {
+            alert("통신실패");
+        }
+    });
+}
+
+function reserve(bookTitle, bookAuthor, bookPublisher, reserver) {
+    alert("제목: " + bookTitle + " 저자: " + bookAuthor + " 출판사: " + bookPublisher + " 예약자 ID: " + reserver);
+    location.href='/book/reserveBook?bookTitle=' + bookTitle + '&bookAuthor=' + bookAuthor + '&bookPublisher=' + bookPublisher + '&reserver=' + reserver;
+}
+</script>
+<style type="text/css">
+.lead{
+   text-align: right;
+   padding: 10px;
+}
+
+</style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="lead">
+          <span th:text="${session.mdto.id}"></span>[<span th:text="${session.mdto.role}"></span>]님께서 로그인하셨습니다.
+    </div>
+    <input type="hidden" id="reserver" th:value="${session.mdto.id}" />
+    <h1>검색 페이지</h1>
+    <div class="search" style="text-align: center;">
+        <input type="text" id="search" name="title" style="float: left;"  placeholder="검색어 입력" />
+        <button id="add" onclick="selectList()" type="button" style="float: left;" class="btn btn-dark mt-3" >검색</button>
+    </div>
+    <div id="list"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+@charset "UTF-8";
+
+.content{
+   margin:70px 150px;
+}
+
+#container{
+   width: 800px;
+   margin: 0 auto;
+}
+
+/* .container { */
+/*    background: linear-gradient(to right, #a6e4ff, #6933ff) !important; */
+/* } */
+
+.navbar {
+ 	background: linear-gradient(to right, 	#FFFFFF, 	#9BBF50) !important;
+	background-color: #f0f0f0 !important;
+
+}
+
+#footer{
+   background: linear-gradient(to right, 	#FFFFFF, 	#9BBF50);
+   line-height: 50px;
+   height: 50px;
+   text-align: center;
+   color: black; 
+   font-weight: bold;
+   position: fixed;
+   bottom: 0px;
+   left: 0px;
+   right: 0px;
+}
+
+.errorField{
+   color:red;
+}
+
+.loginVal{
+   border:1px solid #6E6E6E;
+   width: 288px;
+   height: 40px;
+   border-radius: 5px;
+   padding-left: 10px;
+}
+
+input, button{
+   margin:2px;
+}
+
+
+button{
+   border:1px solid 	#A49D6E;
+   background-color: 	#A49D6E;
+   border-radius:5px;
+   width: 150px;
+   height:40px;
+   color:white;
+   font-weight: bold;
+}
+
+button:hover{
+   border:1px solid #DFFD06;
+   background-color: #DFFD06;
+   color:rgb(192, 192, 192);
+}
+
+#container1{
+   width: 1100px;
+   margin-left: 337px;
+}
+
+table{
+   margin-left: auto;
+   margin-right: auto;
+}
+

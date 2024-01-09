@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".btn").click(function () {
+            var seq = $(this).data("seq"); // 해당 버튼의 data-seq 속성값 가져오기
+            // AJAX를 사용하여 서버로 seq 값을 전송
+            $.ajax({
+                type: "POST", // 또는 "GET" 등 적절한 HTTP 메서드 선택
+                url: "/book/returnBook",
+                data: { "seq": seq },
+                success: function (response) {
+                    // 서버로부터의 응답에 대한 처리
+                    console.log(response);
+                },
+                error: function (error) {
+                    // 오류 발생 시 처리
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
+<style type="text/css">
+.lead{
+   text-align: right;
+   padding: 10px;
+}
+
+</style>
+</head>
+<body>
+<div layout:fragment="content">
+	<form action="/book/returnBook" method="get">
+	<div class="lead">
+	      <span th:text="${session.mdto.id}"></span>[<span th:text="${session.mdto.role}"></span>]님께서 로그인하셨습니다.
+	</div>
+	<h1>예약 현황 페이지</h1>
+	<table class="table table-bordered table-striped col-md-12" id="news" >
+      <tr>
+         <th>책 제목</th>
+         <th>글쓴이</th>
+         <th>출판사</th>
+         <th>예약날짜</th>
+         <th>반납날짜</th>
+         <th>반납</th>
+         
+      </tr>   
+      <th:block th:if="${#lists.isEmpty(list)}">
+         <tr>
+            <td colspan="3" style="text-align: center;">---예약결과가 없습니다.---</td>
+         </tr>
+      </th:block>
+      <th:block th:unless="${#lists.isEmpty(list)}">
+         <tr th:each="dto:${list}">
+            <td th:text="${dto.booktitle}"></td>
+            <td th:text="${dto.bookauthor}"></td>
+            <td th:text="${dto.bookpublisher}"></td>
+            <td th:text="${#dates.format(dto.resdate, 'yyyy-MM-dd')}"></td>
+            <td th:text="${#dates.format(dto.returndate, 'yyyy-MM-dd')}"></td>
+            <td><button type="submit" class="btn" th:data-seq="${dto.seq}">
+                            반납
+                        </button></td>
+         </tr>
+      </th:block>
+   </table>
+   </form>
+</div>
+</body>
+</html>

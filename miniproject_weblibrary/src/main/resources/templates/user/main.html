@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.lead {
+   text-align: right;
+   padding: 10px;
+}
+
+.search { 
+    position: relative; 
+    width: 300px;
+} 
+
+input { 
+    width: 100%; 
+    border: 1px solid #bbb; 
+    border-radius: 8px; 
+    padding: 10px 12px; 
+    font-size: 14px; 
+} 
+
+/* Fade-in and fade-out animation */
+@keyframes fadeInOut {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+#welcomeMessage {
+    animation: fadeInOut 3s ease infinite; /* Change '3s' to adjust the duration of the animation */
+    text-align: center; /* Center the text */
+    font-size: 30px; /* Set font size to 30px */
+}
+</style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="lead">
+        <span th:text="${session.mdto.id}"></span>[<span th:text="${session.mdto.role}"></span>]님께서 로그인하셨습니다.
+    </div>
+    <div id="welcomeMessage">
+        작은 도서관에 오신 걸 환영합니다.
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.board.mapper.BookMapper">
+	
+	<insert id="insertBook" parameterType="bookDto">
+		INSERT INTO BOOKINFO
+		VALUES(NULL,#{title},#{writer},#{publisher},#{content}, null, 'N', null)
+	</insert>
+	
+	<select id="getAllList" resultType="bookDto">
+		SELECT BOOK_SEQ, TITLE, WRITER, PUBLISHER, RESFLAG
+		FROM BOOKINFO
+	</select>
+	
+	<select id="getSelectList" parameterType="String" resultType="bookDto">
+		SELECT BOOK_SEQ, TITLE, WRITER, PUBLISHER, RESFLAG
+		FROM BOOKINFO
+		WHERE TITLE LIKE CONCAT('%' ,#{title}, '%')
+	</select>
+	
+	 <select id="getBook" parameterType="Integer" resultType="bookDto">
+      SELECT TITLE, WRITER, PUBLISHER, CONTENT
+      FROM BOOKINFO
+      WHERE BOOK_SEQ = #{book_seq}
+   </select>
+   
+   <insert id="reserveBook" parameterType="Map">
+		INSERT INTO reserveinfo
+		VALUES(NULL,#{bookTitle},#{bookAuthor},#{bookPublisher},#{reserver},SYSDATE(),DATE_ADD(SYSDATE(), INTERVAL 7 DAY))
+	</insert>
+	
+	<delete id="returnBook" parameterType="int">
+	    DELETE FROM reserveinfo
+	    WHERE SEQ = #{seq}
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

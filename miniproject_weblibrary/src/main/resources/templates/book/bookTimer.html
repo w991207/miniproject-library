@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout}">
+<head>
+<meta charset="UTF-8">
+<title>책 읽기 타이머</title>
+<style type="text/css">
+    #container {
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    #timer {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+</style>
+<script type="text/javascript">
+    var timerInterval;
+    var seconds = 0;
+    var minutes = 0;
+    var hours = 0;
+
+    function startTimer() {
+        timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
+
+    function updateTimer() {
+        seconds++;
+        if (seconds === 60) {
+            seconds = 0;
+            minutes++;
+            if (minutes === 60) {
+                minutes = 0;
+                hours++;
+            }
+        }
+
+        var formattedTime =
+            (hours < 10 ? "0" : "") + hours + ":" +
+            (minutes < 10 ? "0" : "") + minutes + ":" +
+            (seconds < 10 ? "0" : "") + seconds;
+
+        document.getElementById('timer').innerText = formattedTime;
+    }
+
+    function recordTimer() {
+        var currentTimerValue = document.getElementById('timer').innerText;
+        document.getElementById('recordTime').value = currentTimerValue;
+    }
+</script>
+</head>
+<body>
+<div layout:fragment="content">
+    <div id="container">
+        <h1>책 읽기 타이머</h1>
+        <div id="timer">00:00:00</div>
+        <button onclick="startTimer()">Start Timer</button>
+        <button onclick="stopTimer()">Stop Timer</button>
+        <button id="record" onclick="recordTimer()">Record Timer</button><br/>
+        <input id="recordTime" type="text" />
+    </div>
+</div>
+</body>
+</html>
