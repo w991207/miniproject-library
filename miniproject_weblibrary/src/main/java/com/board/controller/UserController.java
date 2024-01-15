@@ -148,32 +148,6 @@ public class UserController {
 	        return "redirect:/login"; // 로그인 페이지로 리다이렉트 또는 다른 처리
 	    }
    }
-//   
-//   
-//   @GetMapping(value = "/allUserList")
-//   public String allUserList(Model model, LoginCommand loginCommand, HttpServletRequest request) {
-//      System.out.println("유저리스트로 이동");
-//      List<UserDto> list = userService.getAllUserList();
-//      
-//      model.addAttribute("list", list);
-//      model.addAttribute("delUserCommand", new DelUserCommand());
-//      return "user/adminAllUserList";
-//   }
-//   
-//   @RequestMapping(value="/mulDel",method = {RequestMethod.GET, RequestMethod.POST})
-//   public String mulDel(@Validated DelUserCommand delUserCommand
-//                   ,BindingResult result
-//                      , Model model) {
-//      if(result.hasErrors()) {
-//         System.out.println("최소하나 체크하기");
-//         List<UserDto> list=userService.getAllUserList();
-//         model.addAttribute("list", list);
-//         return "user/adminAllUserList";
-//      }
-//            
-//      userService.mulDel(delUserCommand.getId());
-//      System.out.println("아이디 삭제");
-//      return "redirect:/user/allUserList";
-//   }
+
 
 }

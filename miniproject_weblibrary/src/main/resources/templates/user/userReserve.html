@@ -37,12 +37,12 @@
 </head>
 <body>
 <div layout:fragment="content">
-	<form action="/book/returnBook" method="get">
-	<div class="lead">
-	      <span th:text="${session.mdto.id}"></span>[<span th:text="${session.mdto.role}"></span>]님께서 로그인하셨습니다.
-	</div>
-	<h1>예약 현황 페이지</h1>
-	<table class="table table-bordered table-striped col-md-12" id="news" >
+   <form action="/book/returnBook" method="get">
+   <div class="lead">
+         <span th:text="${session.mdto.id}"></span>[<span th:text="${session.mdto.role}"></span>]님께서 로그인하셨습니다.
+   </div>
+   <h1>예약 현황 페이지</h1>
+   <table class="table table-bordered table-striped col-md-12" id="news" >
       <tr>
          <th>책 제목</th>
          <th>글쓴이</th>

@@ -1,5 +1,6 @@
 package com.board.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.w3c.dom.NodeList;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,9 +39,11 @@ import org.springframework.web.multipart.MultipartRequest;
 import org.xml.sax.SAXException;
 
 import com.board.command.BookInsertCommad;
+import com.board.command.LoginCommand;
 import com.board.command.ReserveBookCommand;
 import com.board.command.returnCommand;
 import com.board.dtos.BookDto;
+import com.board.dtos.UserDto;
 import com.board.service.FileService;
 import com.board.service.BookService;
 
@@ -65,14 +69,6 @@ public class BookController {
 		return "book/bookList";
 	}
 
-//   @GetMapping(value = "/selectList")
-//	public String SelectList(Model model, String title) {
-//		System.out.println("검색목록 보기");
-//		List<BookDto> list = bookService.getSelectList(title);
-//		model.addAttribute("list", list);
-//		return "book/bookList";
-//	}
-   
    @GetMapping(value = "select")
    public String SelectList() {
 	   return "book/selectList";
@@ -168,8 +164,7 @@ public class BookController {
       BookDto dto = bookService.getBook(book_seq);
       model.addAttribute("bookInsertCommand", new BookInsertCommad());
       model.addAttribute("bdto", dto);
-//      int seq = bookInsertCommad.getBook_seq();
-//      bookService.readCount(seq);//조회수 증가
+
 
       return "book/bookDetail";
    }
@@ -182,70 +177,69 @@ public class BookController {
    }
    
    @GetMapping(value = "/bookTimer")
-   public String bookTimer(Model model) {
+   public String bookTimer() {
       System.out.println("책 읽기 타이머로 이동");
       return "book/bookTimer";
    }
    
+   @ResponseBody
+   @GetMapping(value = "/bookRecord")
+   public void bookRecord(Model model, String recordTime, HttpServletRequest request) {
+      System.out.println("recordTime : " + recordTime);
+      UserDto mdto = (UserDto) request.getSession().getAttribute("mdto");
+      String id = mdto.getId();
+      System.out.println("User ID: " + id);
+      Map<String, String> map = new HashMap<>();
+      map.put("recordTime", recordTime);
+      map.put("id", id);
+      bookService.recordBookTime(map);
+   }
    
-//   @PostMapping(value = "/newsBoardUpdate")
-//   public String boardUpdate(@Validated NewsUpdateBoardCommand updateBoardCommand
-//                              ,BindingResult result) {
-//      System.out.println("수정시작");
-//      if(result.hasErrors()) {
-//         System.out.println("수정내용을 모두 입력해주세요");
-//         return "news/newsBoardDetail";
-//      }
-//      newsBoardService.updateBoard(updateBoardCommand);
-//      
-//      return "redirect:/news/newsBoardDetail?board_seq="+updateBoardCommand.getBoard_seq();
-//      
-//   }
+   @ResponseBody
+   @GetMapping(value = "/getRecordData")
+   public List<Map<String, Object>> getRecordData(Model model, HttpServletRequest request) {
+      UserDto mdto = (UserDto) request.getSession().getAttribute("mdto");
+      String id = mdto.getId();
+      System.out.println("User ID: " + id);
+      List<Map<String, Object>> result = bookService.getRecordDate(id);
+      System.out.println(result);
+      return result;
+   }
    
-//   @GetMapping(value = "/download")
-//   public void download(int file_seq, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-//      FileBoardDto fdto = fileService.getFileInfo(file_seq);
-//      
-//      fileService.fileDownload(fdto.getOrigin_filename(),fdto.getStored_filename(),request,response);
-//   }
-//   
    @RequestMapping(value = "/returnBook", method = {RequestMethod.GET, RequestMethod.POST})
    public String returnBook(@Validated returnCommand returnCommand,
                             BindingResult result,
                             Model model,
                             String pnum) {
        System.out.println("책 반납하기");
-
        // 로그 추가: 메서드 시작
        System.out.println("returnBook 메서드 시작");
-
        if (result.hasErrors()) {
            // 유효성 검사 에러가 있을 경우 처리
            List<BookDto> list = bookService.getAllList();
            model.addAttribute("list", list);
-
-           // 로그 추가: 유효성 검사 실패
            System.out.println("유효성 검사 실패");
-
            return "user/userReserve"; // 적절한 뷰 페이지로 이동
        }
-
-       // 유효성 검사가 통과한 경우
        boolean success = bookService.returnBook(returnCommand.getSeq());
-
        if (success) {
-           // 반납 성공
            System.out.println("책 반납 완료");
        } else {
-           // 반납 실패
            System.out.println("책 반납 실패");
        }
-
        // 로그 추가: 메서드 종료
        System.out.println("returnBook 메서드 종료");
-
        return "redirect:/user/userReserve"; // 반납 후 도서 목록 페이지로 이동
    }
+   
+   @GetMapping(value = "/bookQuiz")
+   public String bookQuiz() {
+      System.out.println("문학 퀴즈 페이지로 이동");
+      return "book/bookQuiz";
+   }
+   
+   
+   
 
 
 }

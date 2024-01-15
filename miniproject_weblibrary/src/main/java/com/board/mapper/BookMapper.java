@@ -33,9 +33,16 @@ public interface BookMapper {
       // 조회수
       public boolean readCount(int seq);
       
-      //페이징
+      // 페이징
       public int getPCount();
       
-      // 책 반납
+      // 시간 저장
+      public boolean recordBookTime(Map<String, String> map);
+      
+      public List<Map<String, Object>> getRecordDate(String id);
+      
+   // 책 반납
       public boolean returnBook(int seq);
+
+      
 }

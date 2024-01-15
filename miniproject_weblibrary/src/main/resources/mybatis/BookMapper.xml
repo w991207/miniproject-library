@@ -30,10 +30,24 @@
 		VALUES(NULL,#{bookTitle},#{bookAuthor},#{bookPublisher},#{reserver},SYSDATE(),DATE_ADD(SYSDATE(), INTERVAL 7 DAY))
 	</insert>
 	
+	<insert id="recordBookTime" parameterType="Map">
+		INSERT INTO BOOKTIMER
+		VALUES(NULL,#{id},#{recordTime},SYSDATE())
+	</insert>
+	
+	<select id="getRecordDate" parameterType="Map" resultType="Map">
+		SELECT REGDATE, TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(booktime))), '%H:%i:%s') AS total_time
+		FROM BOOKTIMER
+		WHERE ID = #{id}
+		GROUP BY REGDATE
+	</select>
+	
 	<delete id="returnBook" parameterType="int">
-	    DELETE FROM reserveinfo
-	    WHERE SEQ = #{seq}
-	</delete>
+       DELETE FROM reserveinfo
+       WHERE SEQ = #{seq}
+   </delete>
+	
+	
 </mapper>
 
 

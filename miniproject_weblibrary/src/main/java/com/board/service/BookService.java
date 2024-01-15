@@ -32,12 +32,6 @@ public class BookService {
    @Autowired
    private FileService fileService;
    
-//   public List<NewsBoardDto> getAllList(String pnum){
-//      Map<String,String>map=new HashMap<>();
-//      map.put("pnum", pnum);
-//      return newsBoardMapper.getAllList(map);
-//   }
-   
  //글목록 조회
  	public List<BookDto> getAllList(){
  		return bookMapper.getAllList();
@@ -50,11 +44,7 @@ public class BookService {
 	public BookDto getBook(int book_seq) {
         return bookMapper.getBook(book_seq);
      }
-	// 예약한 책 반납하기
-	public boolean returnBook(int seq) {
-	   return bookMapper.returnBook(seq);
-	}
-
+	
    //글 추가, 파일 업로드 및 파일 정보 추가
       public void insertBook(BookInsertCommad bookInsertCommad, MultipartRequest multipartRequest, HttpServletRequest request) throws IllegalStateException, IOException {
          
@@ -101,34 +91,22 @@ public class BookService {
                
                return bookMapper.reserveBook(map);
       }
-//      
-//      public boolean mulDel(String[] seqs) {
-//         return newsBoardMapper.mulDel(seqs);
-//      }
-//      
-//      public boolean readCount(int seq) {
-//         
-//         return newsBoardMapper.readCount(seq);
-//      }
-//      public boolean insertReply(InsertReplyCommand insertCommand) throws Exception {
-//          
-//          NewsBoardDto dto=new NewsBoardDto();
-//          dto.setBoard_seq(insertCommand.getBoard_seq());
-//          dto.setId(insertCommand.getId());
-//          dto.setContent(insertCommand.getContent());
-//          
-//          int count=newsBoardReplyMapper.insertReplyBoard(dto);
-//         
-//          return count>0?true:false;
-//       }
-//   
-//    public List<NewsBoardDto> showReply(int seq) throws Exception{    
-//        return newsBoardReplyMapper.showReplyBoard(seq);
-//    }
-//
-//   public int getPCount() {
-//      return newsBoardMapper.getPCount();
-//   }
+      
+      public boolean recordBookTime(Map<String, String> map) {
+    	  System.out.println("서비스의 맵 : " + map);
+    	  return bookMapper.recordBookTime(map);
+      }
+      
+      public List<Map<String, Object>> getRecordDate(String id) {
+    	  return bookMapper.getRecordDate(id);
+      }
+      
+   // 예약한 책 반납하기
+      public boolean returnBook(int seq) {
+         return bookMapper.returnBook(seq);
+      }
+
+      
 }
 
 

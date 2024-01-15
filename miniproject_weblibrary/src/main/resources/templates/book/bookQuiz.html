@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>문학 퀴즈</title>
+    <style type="text/css">
+        /* 초기에 숨겨진 상태로 스타일링 */
+        #answerSection {
+            display: none;
+        }
+    </style>
+    <script type="text/javascript">
+        async function getQuiz(event) {
+            // 기본 동작 막기 (페이지 새로고침 방지)
+            event.preventDefault();
+
+            try {
+                // 문제를 비동기적으로 가져오기
+                const response = await fetch('/webcrawl/extractText');
+                // 정답 입력을 위한 섹션 표시
+                document.getElementById("answerSection").style.display = "block";
+                // 가져온 데이터를 활용하여 페이지에 표시
+                document.getElementById("extractedText1").innerText = data.extractedText1;
+                document.getElementById("extractedText2").innerText = data.extractedText2;
+                // 나머지 데이터도 동일하게 처리
+
+                // 입력 창 초기화
+                document.getElementById("answerInput").value = "";
+            } catch (error) {
+                console.error("문제를 불러오는 도중 오류가 발생했습니다.", error);
+            }
+        }
+
+        function checkAnswer() {
+            // 입력된 정답 가져오기
+            var answer = document.getElementById("answerInput").value;
+
+            // 예시: 정답이 4인 경우
+            if (answer === "4") {
+                alert("정답입니다!");
+                // 여기에서 점수를 1점 올려 출력하는 동작 수행
+                var currentScore = parseInt(document.getElementById("score").innerText.replace(/\D/g, ''), 10);
+                var newScore = currentScore + 1;
+                document.getElementById("score").innerText = "점수 : " + newScore;
+            } else {
+                alert("틀렸습니다. 다시 시도하세요.");
+            }
+
+            // 입력 창 초기화
+            document.getElementById("answerInput").value = "";
+        }
+    </script>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div id="container">
+            <h2>문학 퀴즈</h2>
+            <p id="score">점수 : 0</p>
+            <button onclick="getQuiz(event)">문제 풀기</button>
+
+            <!-- 정답 입력 섹션 -->
+            <div id="answerSection">
+                <br/>
+                <p th:text="${extractedText3}"></p>
+                <br/>
+                <p th:text="${extractedText5}"></p>
+                <p th:text="${extractedText6}"></p>
+                <p th:text="${extractedText7}"></p>
+                <p th:text="${extractedText8}"></p>
+                <p th:text="${extractedText9}"></p>
+                <p th:text="${extractedText10}"></p>
+                <br/>
+                <p th:text="${extractedText11}"></p>
+                <p th:text="${extractedText12}"></p>
+                <p th:text="${extractedText13}"></p>
+                <p th:text="${extractedText14}"></p>
+                <p th:text="${extractedText15}"></p>
+                <p th:text="${extractedText26}"></p>
+                <p th:text="${extractedText27}"></p>
+                <p th:text="${extractedText28}"></p>
+                <p th:text="${extractedText29}"></p>
+                <p th:text="${extractedText30}"></p>
+
+                <input type="text" id="answerInput" placeholder="정답을 입력하세요(숫자)">
+                <button onclick="checkAnswer()">확인</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

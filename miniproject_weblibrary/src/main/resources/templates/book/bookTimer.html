@@ -3,68 +3,152 @@
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
      layout:decorate="~{layouts/layout}">
 <head>
-<meta charset="UTF-8">
-<title>책 읽기 타이머</title>
-<style type="text/css">
-    #container {
-        text-align: center;
-        margin-top: 50px;
-    }
-
-    #timer {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-</style>
-<script type="text/javascript">
-    var timerInterval;
-    var seconds = 0;
-    var minutes = 0;
-    var hours = 0;
-
-    function startTimer() {
-        timerInterval = setInterval(updateTimer, 1000);
-    }
-
-    function stopTimer() {
-        clearInterval(timerInterval);
-    }
-
-    function updateTimer() {
-        seconds++;
-        if (seconds === 60) {
-            seconds = 0;
-            minutes++;
-            if (minutes === 60) {
-                minutes = 0;
-                hours++;
-            }
+    <meta charset="UTF-8">
+    <title>책 읽기 타이머</title>
+    <style type="text/css">
+        #container {
+            text-align: center;
+            margin-top: 50px;
         }
 
-        var formattedTime =
-            (hours < 10 ? "0" : "") + hours + ":" +
-            (minutes < 10 ? "0" : "") + minutes + ":" +
-            (seconds < 10 ? "0" : "") + seconds;
+        #timer {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        #dateDifference {
+            margin-top: 20px;
+        }
 
-        document.getElementById('timer').innerText = formattedTime;
-    }
+        #graphButton {
+            margin-top: 10px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script type="text/javascript">
+        var timerInterval;
+        var seconds = 0;
+        var minutes = 0;
+        var hours = 0;
 
-    function recordTimer() {
-        var currentTimerValue = document.getElementById('timer').innerText;
-        document.getElementById('recordTime').value = currentTimerValue;
-    }
-</script>
+        function startTimer() {
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function updateTimer() {
+            seconds++;
+            if (seconds === 60) {
+                seconds = 0;
+                minutes++;
+                if (minutes === 60) {
+                    minutes = 0;
+                    hours++;
+                }
+            }
+
+            var formattedTime =
+                (hours < 10 ? "0" : "") + hours + ":" +
+                (minutes < 10 ? "0" : "") + minutes + ":" +
+                (seconds < 10 ? "0" : "") + seconds;
+
+            document.getElementById('timer').innerText = formattedTime;
+        }
+
+        function recordTimer() {
+            var recordTime = document.getElementById('timer').innerText;
+            $.ajax({
+                url: "/book/bookRecord",
+                method: "get",
+                data: { "recordTime": recordTime },
+                dataType: "json"
+            });
+           	alert("기록이 저장되었습니다.");
+        }
+
+        function showGraph() {
+            $.ajax({
+                url: "/book/getRecordData",
+                method: "get",
+                dataType: "json",
+                success: function (data) {
+                    var labels = [];
+                    var times = [];
+                    var dateDifferences = [];
+
+                    for (var i = 0; i < data.length; i++) {
+                        labels.push(new Date(data[i].REGDATE).toISOString().split('T')[0]);
+                        var timeComponents = data[i].total_time.split(':');
+                        var totalSeconds = parseInt(timeComponents[0]) * 3600 + parseInt(timeComponents[1]) * 60 + parseInt(timeComponents[2]);
+                        times.push(totalSeconds);
+                    }
+
+                    for (var i = 1; i < labels.length; i++) {
+                        var currentDate = new Date(labels[i]);
+                        var prevDate = new Date(labels[i - 1]);
+                        var dateDifference = (currentDate - prevDate) / 1000;
+                        dateDifferences.push(dateDifference);
+                    }
+
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Reading Time',
+                                data: times,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1,
+                                fill: false,
+                                hitRadius: 5
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    type: 'time',
+                                    time: {
+                                        unit: 'day',
+                                        displayFormats: {
+                                            day: 'yyyy-MM-dd'
+                                        }
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Reading Time (seconds)'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    var dateDifferenceText = "Date Difference: " + dateDifferences.join(', ') + " seconds";
+                    document.getElementById('dateDifference').innerText = dateDifferenceText;
+                }
+            });
+        }
+    </script>
 </head>
 <body>
-<div layout:fragment="content">
-    <div id="container">
-        <h1>책 읽기 타이머</h1>
-        <div id="timer">00:00:00</div>
-        <button onclick="startTimer()">Start Timer</button>
-        <button onclick="stopTimer()">Stop Timer</button>
-        <button id="record" onclick="recordTimer()">Record Timer</button><br/>
-        <input id="recordTime" type="text" />
+    <div layout:fragment="content">
+        <div id="container">
+            <h1>책 읽기 타이머</h1>
+            <div id="timer">00:00:00</div>
+            <button onclick="startTimer()">Start Timer</button>
+            <button onclick="stopTimer()">Stop Timer</button>
+            <button id="record" onclick="recordTimer()">Record Timer</button>
+            <button id="graphButton" onclick="showGraph()">Show Graph</button>
+            <canvas id="myChart" width="400" height="200"></canvas>
+            <div id="dateDifference"></div>
+        </div>
     </div>
-</div>
 </body>
 </html>

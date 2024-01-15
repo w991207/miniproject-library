@@ -8,9 +8,9 @@
 <script type="text/javascript">
 
 function selectList() {
-	var reserver = $("#reserver").val();
-	var selectWord = $("#search").val();
-	$.ajax({
+   var reserver = $("#reserver").val();
+   var selectWord = $("#search").val();
+   $.ajax({
         url: "/book/selectList",
         method: "get",
         data: { "selectWord": selectWord },
